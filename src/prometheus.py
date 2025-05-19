@@ -27,8 +27,6 @@ class QBitMainDataTorrent(typing.TypedDict):
 	downloaded: int
 	uploaded: int
 	eta: int
-	
-	"all seeds"
 	num_complete: int # all seeds
 	num_incomplete: int # all leechs
 	num_leechs: int
@@ -50,7 +48,7 @@ class QBitMainData(typing.TypedDict):
 
 collector_prefix = "qbittorrent"
 
-class QBitTorrentCollector(prometheus_registry.Collector):
+class QBittorrentCollector(prometheus_registry.Collector):
 	def collect_global_metrics(
 		self,
 		maindata: QBitMainData,
@@ -254,7 +252,7 @@ class QBitTorrentCollector(prometheus_registry.Collector):
 if __name__ == "__main__":
 	config = get_config()
 
-	prometheus_core.REGISTRY.register(QBitTorrentCollector())
+	prometheus_core.REGISTRY.register(QBittorrentCollector())
 	server, thread = prometheus.start_http_server(config["exporter_port"])
 
 	def shutdown(_sigtype: int, _frame: types.FrameType | None) -> None:

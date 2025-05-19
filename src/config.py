@@ -59,7 +59,7 @@ def _load_config() -> None:
 
 	if _config["qbittorrent_url"] is None:
 		raise Exception(
-			"Configuration error: no qbittorrent URL has been provided",
+			"Configuration error: no qBittorrent URL has been provided",
 		)
 
 

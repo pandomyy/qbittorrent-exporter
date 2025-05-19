@@ -45,7 +45,7 @@ def _make_request(path: str, retried: bool = False) -> typing.Any:
 			login()
 		
 		else:
-			raise Exception("Failed to log in to qbittorrent")
+			raise Exception("Failed to log in to qBittorrent")
 
 		return _make_request(path, True)
 

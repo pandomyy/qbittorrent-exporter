@@ -92,7 +92,7 @@ class QBittorrentCollector(prometheus_registry.Collector):
 		label_names = ["name"]
 
 		total_downloaded = prometheus_core.CounterMetricFamily(
-			f"{torrent_prefix}_downloaded_total",
+			f"{torrent_prefix}_total_downloaded",
 			"The total amount downloaded for a torrent, including even sections subsequently marked as 'Do not download'",
 			labels=label_names,
 			unit="bytes",

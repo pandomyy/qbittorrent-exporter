@@ -1,0 +1,23 @@
+name: Build Container Image on Release
+on:
+  release:
+    types: [published]
+
+env:
+  IMAGE_URL: ghcr.io/${{ github.repository }}
+  VERSION: ${{ github.event.release.tag_name }}
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: build and tag image
+        run: docker build . --tag $IMAGE_URL:$VERSION
+
+      - name: log in to registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      
+      - name: deploy
+        run: docker push $IMAGE_URL:$VERSION

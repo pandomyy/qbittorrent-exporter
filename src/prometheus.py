@@ -254,8 +254,10 @@ if __name__ == "__main__":
 
 	prometheus_core.REGISTRY.register(QBittorrentCollector())
 	server, thread = prometheus.start_http_server(config["exporter_port"])
+	print("Started qbittorrent-exporter server")
 
 	def shutdown(_sigtype: int, _frame: types.FrameType | None) -> None:
+		print("Stopping qbittorrent-exporter server")
 		server.shutdown()
 
 	signal.signal(signal.SIGINT, shutdown)

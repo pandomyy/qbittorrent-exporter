@@ -63,7 +63,7 @@ class QBittorrentCollector(prometheus_registry.Collector):
 		)
 
 		yield prometheus_core.CounterMetricFamily(
-			f"{collector_prefix}_alltime_downloaded",
+			f"{global_prefix}_alltime_downloaded",
 			"The total amount of bytes downloaded with this client",
 			value=maindata["server_state"]["alltime_dl"],
 			unit="bytes",
@@ -77,7 +77,7 @@ class QBittorrentCollector(prometheus_registry.Collector):
 		)
 
 		yield prometheus_core.CounterMetricFamily(
-			f"{collector_prefix}_session_downloaded",
+			f"{global_prefix}_session_downloaded",
 			"The total amount of bytes downloaded with this client",
 			value=maindata["server_state"]["alltime_dl"],
 			unit="bytes",

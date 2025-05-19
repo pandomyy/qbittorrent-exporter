@@ -1,0 +1,5 @@
+-r requirements.txt
+mypy==1.15.0
+
+types-PyYAML==6.0.12.20250516
+types-requests==2.32.0.20250515

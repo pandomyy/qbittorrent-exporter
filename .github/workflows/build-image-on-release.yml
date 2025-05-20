@@ -4,7 +4,7 @@ on:
     types: [published]
 
 env:
-  IMAGE_URL: ghcr.io/${{ github.repository }}
+  IMAGE_URL: ${{ vars.CONTAINER_REGISTRY }}/${{ github.repository }}
   VERSION: ${{ github.event.release.tag_name }}
 
 jobs:
@@ -24,7 +24,7 @@ jobs:
           docker image tag $IMAGE_URL:$VERSION $IMAGE_URL:latest
 
       - name: log in to registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ vars.CONTAINER_REGISTRY }} -u ${{ github.repository_owner }} --password-stdin
       
       - name: deploy
         run: |

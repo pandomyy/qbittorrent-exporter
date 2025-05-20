@@ -11,5 +11,4 @@ EXPOSE 8000
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-ENTRYPOINT ["python3"]
-CMD ["src/prometheus.py"]
+CMD ["python3", "src/prometheus.py"]

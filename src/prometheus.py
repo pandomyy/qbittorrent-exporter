@@ -131,8 +131,8 @@ class QBittorrentCollector(prometheus_registry.Collector):
 			unit="seconds",
 		)
 
-		state = prometheus_core.InfoMetricFamily(
-			f"{torrent_prefix}_state",
+		info = prometheus_core.InfoMetricFamily(
+			f"{torrent_prefix}",
 			"The non-numeric information of a torrent",
 			labels=[*label_names, "state"],
 		)
@@ -154,7 +154,7 @@ class QBittorrentCollector(prometheus_registry.Collector):
 
 			eta.add_metric(labels, torrent["eta"])
 
-			state.add_metric(labels, {"state": torrent["state"]})
+			info.add_metric(labels, {"state": torrent["state"]})
 		
 		return [
 			total_downloaded,
@@ -163,7 +163,7 @@ class QBittorrentCollector(prometheus_registry.Collector):
 			total_size,
 			size,
 			eta,
-			state,
+			info,
 		]
 	
 	def collect_torrent_connection_metrics(

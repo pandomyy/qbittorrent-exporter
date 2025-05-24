@@ -195,20 +195,6 @@ class QBittorrentCollector(prometheus_registry.Collector):
 			labels=label_names,
 		)
 
-		time_active = prometheus_core.CounterMetricFamily(
-			f"{torrent_prefix}_active_time",
-			"The amount of time the torrent has been active",
-			labels=label_names,
-			unit="seconds",
-		)
-
-		time_seeding = prometheus_core.CounterMetricFamily(
-			f"{torrent_prefix}_seeding_time",
-			"The amount of time the torrent has been seeding",
-			labels=label_names,
-			unit="seconds",
-		)
-
 		time_of_last_activity = prometheus_core.GaugeMetricFamily(
 			f"{torrent_prefix}_last_activity",
 			"The timestamp of when a torrent was last active",
@@ -225,9 +211,6 @@ class QBittorrentCollector(prometheus_registry.Collector):
 			total_leeches.add_metric(labels, torrent["num_incomplete"])
 			connected_leeches.add_metric(labels, torrent["num_leechs"])
 
-			time_active.add_metric(labels, torrent["time_active"])
-			time_seeding.add_metric(labels, torrent["seeding_time"])
-
 			time_of_last_activity.add_metric(labels, torrent["last_activity"])
 
 		return [
@@ -235,8 +218,6 @@ class QBittorrentCollector(prometheus_registry.Collector):
 			connected_seeds,
 			total_leeches,
 			connected_leeches,
-			time_active,
-			time_seeding,
 			time_of_last_activity,
 		]
 		

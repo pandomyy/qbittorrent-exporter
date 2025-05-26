@@ -47,14 +47,16 @@ class QBitMainData(typing.TypedDict):
 
 
 collector_prefix = "qbittorrent"
+global_prefix = f"{collector_prefix}_global"
+torrent_prefix = f"{collector_prefix}_torrent"
+
+torrent_label_names = ["name"]
 
 class QBittorrentCollector(prometheus_registry.Collector):
 	def collect_global_metrics(
 		self,
 		maindata: QBitMainData,
 	) -> typing.Iterable[prometheus.Metric]:
-		global_prefix = f"{collector_prefix}_global"
-
 		yield prometheus_core.CounterMetricFamily(
 			f"{global_prefix}_alltime_uploaded",
 			"The total amount of bytes uploaded with this client",
@@ -87,54 +89,50 @@ class QBittorrentCollector(prometheus_registry.Collector):
 		self,
 		maindata: QBitMainData,
 	) -> typing.Iterable[prometheus.Metric]:
-		torrent_prefix = f"{collector_prefix}_torrent"
-
-		label_names = ["name"]
-
 		total_downloaded = prometheus_core.CounterMetricFamily(
 			f"{torrent_prefix}_total_downloaded",
 			"The total amount downloaded for a torrent, including even sections subsequently marked as 'Do not download'",
-			labels=label_names,
+			labels=torrent_label_names,
 			unit="bytes",
 		)
 		relevant_downloaded = prometheus_core.CounterMetricFamily(
 			f"{torrent_prefix}_downloaded",
 			"The amount downloaded for a torrent, including only sections marked for download",
-			labels=label_names,
+			labels=torrent_label_names,
 			unit="bytes",
 		)
 
 		total_uploaded = prometheus_core.CounterMetricFamily(
 			f"{torrent_prefix}_uploaded",
 			"The total amount uploaded for a torrent, including sections subsequently marked as 'Do not download'",
-			labels=label_names,
+			labels=torrent_label_names,
 			unit="bytes",
 		)
 
 		total_size = prometheus_core.GaugeMetricFamily(
 			f"{torrent_prefix}_total_size",
 			"The total size of a torrent, including sections marked as 'Do not download'",
-			labels=label_names,
+			labels=torrent_label_names,
 			unit="bytes",
 		)
 		size = prometheus_core.GaugeMetricFamily(
 			f"{torrent_prefix}_size",
 			"The size of a torrent, including only sections marked for download",
-			labels=label_names,
+			labels=torrent_label_names,
 			unit="bytes",
 		)
 
 		eta = prometheus_core.GaugeMetricFamily(
 			f"{torrent_prefix}_eta",
 			"The estimated time remaining for a torrent",
-			labels=label_names,
+			labels=torrent_label_names,
 			unit="seconds",
 		)
 
 		info = prometheus_core.InfoMetricFamily(
 			f"{torrent_prefix}",
 			"The non-numeric information of a torrent",
-			labels=[*label_names, "state"],
+			labels=[*torrent_label_names, "state"],
 		)
 
 		for torrent in maindata["torrents"].values():
@@ -170,35 +168,32 @@ class QBittorrentCollector(prometheus_registry.Collector):
 		self,
 		maindata: QBitMainData,
 	) -> typing.Iterable[prometheus.Metric]:
-		torrent_prefix = f"{collector_prefix}_torrent"
-		label_names = ["name"]
-
 		total_seeds = prometheus_core.GaugeMetricFamily(
 			f"{torrent_prefix}_total_seeds",
 			"The total amount of known seeds for a torrent",
-			labels=label_names,
+			labels=torrent_label_names,
 		)
 		connected_seeds = prometheus_core.GaugeMetricFamily(
 			f"{torrent_prefix}_connected_seeds",
 			"The amount of seeds for a torrent which are curently connected to the client",
-			labels=label_names,
+			labels=torrent_label_names,
 		)
 
 		total_leeches = prometheus_core.GaugeMetricFamily(
 			f"{torrent_prefix}_total_leeches",
 			"The total amount of known leeches for a torrent",
-			labels=label_names,
+			labels=torrent_label_names,
 		)
 		connected_leeches = prometheus_core.GaugeMetricFamily(
 			f"{torrent_prefix}_connected_leeches",
 			"The amount of leeches for a torrent which are curently connected to the client",
-			labels=label_names,
+			labels=torrent_label_names,
 		)
 
 		time_of_last_activity = prometheus_core.GaugeMetricFamily(
 			f"{torrent_prefix}_last_activity",
 			"The timestamp of when a torrent was last active",
-			labels=label_names,
+			labels=torrent_label_names,
 			unit="timestamp_seconds",
 		)
 

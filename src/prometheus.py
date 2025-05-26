@@ -31,13 +31,17 @@ class QBitMainDataTorrent(typing.TypedDict):
 	num_incomplete: int # all leechs
 	num_leechs: int
 	num_seeds: int
-	completion_on: int # unix time of completion | needed?
 	size: int # total_size - (parts of torrent marked as 'Do not download')
 	total_size: int
 	last_activity: int # time of last activity
 	time_active: int
 	seeding_time: int
 	state: str
+	added_on: int # unix time of creation
+	completion_on: int # unix time of completion
+	category: str
+	infohash_v1: str
+	infohash_v2: str
 
 # Remaining fields can be found at:
 # https://github.com/qbittorrent/qBittorrent/wiki/WebUI-API-(qBittorrent-4.1)#get-main-data
@@ -151,8 +155,6 @@ class QBittorrentCollector(prometheus_registry.Collector):
 			size.add_metric(labels, torrent["size"])
 
 			eta.add_metric(labels, torrent["eta"])
-
-			info.add_metric(labels, {"state": torrent["state"]})
 		
 		return [
 			total_downloaded,
@@ -161,7 +163,6 @@ class QBittorrentCollector(prometheus_registry.Collector):
 			total_size,
 			size,
 			eta,
-			info,
 		]
 	
 	def collect_torrent_connection_metrics(
@@ -215,12 +216,44 @@ class QBittorrentCollector(prometheus_registry.Collector):
 			connected_leeches,
 			time_of_last_activity,
 		]
+	
+	def collect_torrent_info_metrics(
+		self,
+		maindata: QBitMainData,
+	) -> typing.Iterable[prometheus.Metric]:
+		torrent_info = prometheus.core.InfoMetricFamily(
+			f"{torrent_prefix}",
+			"The constant information of a torrent",
+			labels=torrent_label_names,
+		)
+
+		for torrent in maindata["torrents"].values():
+			labels = [torrent["name"]]
+
+			torrent_info.add_metric(
+				labels,
+				{
+					"state": torrent["state"],
+					"category": torrent["category"],
+					"hash": torrent["infohash_v1"] or torrent["infohash_v2"],
+					"total_size_bytes": str(torrent["total_size"]),
+					"added_timestamp_seconds": str(torrent["added_on"]),
+					"completed_timestamp_seconds": str(
+						torrent["completion_on"],
+					),
+				},
+			)
+
+		return [
+			torrent_info,
+		]
 		
 
 	def collect(self) -> typing.Iterable[prometheus.Metric]:
 		maindata: QBitMainData = query_qbit_api("sync/maindata")
 
 		yield from self.collect_global_metrics(maindata)
+		yield from self.collect_torrent_info_metrics(maindata)
 		yield from self.collect_torrent_completion_metrics(maindata)
 		yield from self.collect_torrent_connection_metrics(maindata)
 

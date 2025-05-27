@@ -133,12 +133,6 @@ class QBittorrentCollector(prometheus_registry.Collector):
 			unit="seconds",
 		)
 
-		info = prometheus_core.InfoMetricFamily(
-			f"{torrent_prefix}",
-			"The non-numeric information of a torrent",
-			labels=[*torrent_label_names, "state"],
-		)
-
 		for torrent in maindata["torrents"].values():
 			labels = [torrent["name"]]
 

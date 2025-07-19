@@ -15,6 +15,10 @@ jobs:
       contents: read
       packages: write
 
+    env:
+      PRIMARY_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+      BACKUP_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -24,8 +28,8 @@ jobs:
           docker image tag $IMAGE_URL:$VERSION $IMAGE_URL:latest
 
       - name: log in to registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ vars.CONTAINER_REGISTRY }} -u ${{ github.repository_owner }} --password-stdin
-      
+        run: echo "${PRIMARY_TOKEN:-$BACKUP_TOKEN}" | docker login ${{ vars.CONTAINER_REGISTRY }} -u ${{ github.repository_owner }} --password-stdin
+
       - name: deploy
         run: |
           docker push $IMAGE_URL:$VERSION --quiet
